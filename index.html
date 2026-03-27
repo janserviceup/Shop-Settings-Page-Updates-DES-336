@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Settings Dialog — MUI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/@mui/material@5/umd/material-ui.production.min.js" crossorigin></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; }
+    #root { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.4); }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const {
+      Box, Dialog, DialogTitle, DialogContent, DialogActions,
+      TextField, Button, IconButton, Typography, LinearProgress, Chip,
+      Select, MenuItem, FormControl, InputLabel, Checkbox, FormControlLabel,
+      Divider, Paper, Stack, Collapse, styled, createTheme, ThemeProvider,
+      Radio, RadioGroup, FormLabel, Grid,
+    } = MaterialUI;
+
+    const theme = createTheme({
+      palette: {
+        primary: { main: '#FC6432' },
+        secondary: { main: '#6B7280' },
+        success: { main: '#22C55E' },
+        text: { primary: '#1A1A1A', secondary: '#6B7280' },
+      },
+      typography: { fontFamily: '"DM Sans", sans-serif' },
+      shape: { borderRadius: 8 },
+      components: {
+        MuiButton: { styleOverrides: { root: { textTransform: 'none', fontWeight: 600 } } },
+        MuiTextField: { defaultProps: { size: 'small', fullWidth: true, variant: 'outlined' } },
+        MuiOutlinedInput: {
+          styleOverrides: {
+            root: {
+              borderRadius: 8,
+              '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#D1D5DB' },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#FC6432', borderWidth: 2 },
+            },
+            notchedOutline: { borderColor: '#E5E7EB' },
+          },
+        },
+        MuiInputLabel: {
+          styleOverrides: {
+            root: { color: '#9CA3AF', '&.Mui-focused': { color: '#FC6432' } },
+          },
+        },
+      },
+    });
+
+    /* ── Step circle component ── */
+    function StepCircle({ number, status }) {
+      if (status === 'completed') {
+        return (
+          <Box sx={{
+            width: 32, height: 32, borderRadius: '50%', bgcolor: '#FC6432',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <span className="material-icons-outlined" style={{ fontSize: 20, color: '#fff' }}>check</span>
+          </Box>
+        );
+      }
+      return (
+        <Box sx={{
+          width: 32, height: 32, borderRadius: '50%',
+          bgcolor: '#FC6432',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          opacity: status === 'active' ? 1 : 0.85,
+        }}>
+          <Typography sx={{ color: '#fff', fontSize: 14, fontWeight: 700, lineHeight: 1 }}>{number}</Typography>
+        </Box>
+      );
+    }
+
+    /* ── Step data ── */
+    const stepsData = [
+      {
+        label: 'Account Info',
+        fields: (
+          <Stack spacing={2.5}>
+            <Stack direction="row" spacing={2}>
+              <TextField label="Primary Email" defaultValue="Jan Morris" />
+              <TextField label="Primary Phone" defaultValue="(512)-555-0147" />
+            </Stack>
+            <TextField label="Shop Legal Name" defaultValue="Jan's Best Shop" fullWidth />
+            <TextField label="Contact Name" defaultValue="Jan Morris" fullWidth />
+            <TextField label="Street Address" defaultValue="4521 Research Blvd" fullWidth />
+            <Stack direction="row" spacing={2}>
+              <TextField label="City" defaultValue="Austin" />
+              <FormControl fullWidth size="small">
+                <InputLabel>State</InputLabel>
+                <Select label="State" defaultValue="Texas">
+                  <MenuItem value="Texas">Texas</MenuItem>
+                  <MenuItem value="California">California</MenuItem>
+                  <MenuItem value="New York">New York</MenuItem>
+                  <MenuItem value="Florida">Florida</MenuItem>
+                </Select>
+              </FormControl>
+              <TextField label="Zip" defaultValue="78751" />
+            </Stack>
+          </Stack>
+        ),
+      },
+      {
+        label: 'Shop Details',
+        fields: (
+          <Stack spacing={3}>
+            {/* Shop Type */}
+            <FormControl component="fieldset">
+              <FormLabel component="legend" sx={{ fontWeight: 600, fontSize: 15, color: '#1A1A1A', mb: 0.5,
+                '&.Mui-focused': { color: '#1A1A1A' } }}>
+                Shop Type <span style={{ color: '#FC6432' }}>*</span>
+              </FormLabel>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                Select the category that best describes your shop's primary focus.
+              </Typography>
+              <RadioGroup row defaultValue="mechanical">
+                {['Mechanical', 'Dealership', 'Collision', 'Mechanical/Collision'].map(type => (
+                  <FormControlLabel key={type} value={type.toLowerCase()} label={type}
+                    control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#FC6432' } }} />}
+                    sx={{ mr: 3 }} />
+                ))}
+              </RadioGroup>
+            </FormControl>
+
+            {/* Mobile Vendor */}
+            <FormControl component="fieldset">
+              <FormLabel component="legend" sx={{ fontWeight: 600, fontSize: 15, color: '#1A1A1A', mb: 0.5,
+                '&.Mui-focused': { color: '#1A1A1A' } }}>
+                Mobile Vendor
+              </FormLabel>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                Do you perform repairs at the customer's location?
+              </Typography>
+              <RadioGroup row defaultValue="yes">
+                <FormControlLabel value="yes" label="Yes"
+                  control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#FC6432' } }} />} sx={{ mr: 3 }} />
+                <FormControlLabel value="no" label="No"
+                  control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#FC6432' } }} />} />
+              </RadioGroup>
+            </FormControl>
+
+            {/* Vehicle Weight Classes */}
+            <FormControl component="fieldset">
+              <FormLabel component="legend" sx={{ fontWeight: 600, fontSize: 15, color: '#1A1A1A', mb: 0.5,
+                '&.Mui-focused': { color: '#1A1A1A' } }}>
+                Vehicle Weight Classes <span style={{ color: '#FC6432' }}>*</span>
+              </FormLabel>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Select the vehicle weight classes your shop is equipped to service.
+              </Typography>
+              <Grid container spacing={1.5}>
+                {[
+                  'Class 1 (Passenger Cars, Small Pickups)',
+                  'Class 2 (Full-size Pickups, Large SUVs)',
+                  'Class 3 (Medium Pickups, Cargo Vans)',
+                  'Class 4 (City Delivery Trucks)',
+                  'Class 5 (Bucket Trucks, Large Vans)',
+                  'Class 6 (School Buses, Beverage Trucks)',
+                  'Class 7 (City Transit Buses, Refuse Trucks)',
+                  'Class 8 (Semi-Trucks, Large Dump Trucks)',
+                ].map(cls => (
+                  <Grid item xs={6} key={cls}>
+                    <FormControlLabel
+                      control={<Checkbox size="small" sx={{ '&.Mui-checked': { color: '#FC6432' } }} />}
+                      label={<Typography variant="body2">{cls}</Typography>}
+                      sx={{ m: 0 }} />
+                  </Grid>
+                ))}
+              </Grid>
+            </FormControl>
+          </Stack>
+        ),
+      },
+      {
+        label: 'Services Offered',
+        fields: (() => {
+          const categories = [
+            { name: 'Mechanical & Powertrain', examples: 'Engine Repair, Transmission, Fuel System, A/C, Exhaust' },
+            { name: 'Preventative Maintenance', examples: 'Oil Changes, Tire Rotations, Fluid Services, Filter Replacement' },
+            { name: 'Inspections & Diagnostics', examples: 'State Safety Inspection, DOT, Pre-Purchase, Emissions Check' },
+            { name: 'Fleet & Speciality', examples: 'Fleet Upfitting, Telematics, Tow Hitch, Lift Gate Service' },
+            { name: 'Electrical & ADAS', examples: 'Electrical Diagnostics, ADAS Collaboration, Battery, Lighting' },
+            { name: 'Detailing & Appearance', examples: 'Full Detail, Paint Correction, Ceramic Coating, Window Tint' },
+            { name: 'Collision, Body & Glass', examples: 'Dent Repair, Frame Straightening, Windshield Replacement, Painting' },
+            { name: 'Chassis, Brakes & Tires', examples: 'Brake Service, Wheel Alignment, Tire Replacement, Suspension' },
+          ];
+          return (
+            <Stack spacing={0}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                Select the service categories your shop offers. Expand a category to pick specific sub-categories.
+              </Typography>
+              <Stack spacing={1.5}>
+                {categories.map((cat) => (
+                  <Box key={cat.name} sx={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    py: 1.75, px: 2.5,
+                    border: '1px solid #E5E7EB', borderRadius: 0,
+                    cursor: 'pointer',
+                    '&:hover': { bgcolor: '#FAFAFA', borderColor: '#D1D5DB' },
+                    transition: 'all 0.15s',
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, minWidth: 0 }}>
+                      <Typography variant="body2" fontWeight={600} sx={{ flexShrink: 0 }}>{cat.name}</Typography>
+                      <Typography variant="body2" color="text.secondary" noWrap sx={{ fontSize: 13 }}>
+                        E.g. {cat.examples}
+                      </Typography>
+                    </Box>
+                    <span className="material-icons-outlined" style={{ fontSize: 20, color: '#9CA3AF', flexShrink: 0 }}>expand_more</span>
+                  </Box>
+                ))}
+              </Stack>
+            </Stack>
+          );
+        })(),
+      },
+      {
+        label: 'Rates',
+        fields: (
+          <Stack spacing={3}>
+            {/* Info banner */}
+            <Box sx={{
+              display: 'flex', alignItems: 'flex-start', gap: 1.5,
+              bgcolor: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 0, px: 2.5, py: 2,
+            }}>
+              <span className="material-icons-outlined" style={{ fontSize: 20, color: '#3B82F6', flexShrink: 0, marginTop: 1 }}>info</span>
+              <Typography variant="body2" sx={{ color: '#1E40AF', lineHeight: 1.6 }}>
+                These rates are displayed to customers on the marketplace. You can update them anytime from your profile settings.
+              </Typography>
+            </Box>
+
+            {/* Rate fields — 2-column grid with $ prefix */}
+            <Grid container spacing={2}>
+              {[
+                ['Mechanical Rate', '120.00'],
+                ['Body Rate', '80.00'],
+                ['Mobile Repair Rate', '120.00'],
+                ['Paint Labor', '80.00'],
+                ['Structural Labor', '120.00'],
+                ['Diagnostic Labor', '80.00'],
+              ].map(([label, value]) => (
+                <Grid item xs={6} key={label}>
+                  <TextField
+                    label={label}
+                    defaultValue={value}
+                    InputProps={{
+                      startAdornment: (
+                        <Typography sx={{ color: '#6B7280', mr: 0.5, fontSize: 14 }}>$</Typography>
+                      ),
+                    }}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+
+            {/* Parts Discount */}
+            <FormControl component="fieldset">
+              <FormLabel component="legend" sx={{ fontWeight: 600, fontSize: 15, color: '#FC6432', mb: 0.5,
+                '&.Mui-focused': { color: '#FC6432' } }}>
+                Do you offer a Parts Discount?
+              </FormLabel>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                Customers will see that you offer discounted parts pricing.
+              </Typography>
+              <RadioGroup row defaultValue="yes">
+                <FormControlLabel value="yes" label="Yes"
+                  control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#FC6432' } }} />} sx={{ mr: 3 }} />
+                <FormControlLabel value="no" label="No"
+                  control={<Radio size="small" sx={{ '&.Mui-checked': { color: '#FC6432' } }} />} />
+              </RadioGroup>
+            </FormControl>
+          </Stack>
+        ),
+      },
+      {
+        label: 'Hours',
+        fields: (() => {
+          const timeSlots = [];
+          for (let h = 0; h < 24; h++) {
+            for (let m = 0; m < 60; m += 30) {
+              const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+              const ampm = h < 12 ? 'AM' : 'PM';
+              const min = m === 0 ? '00' : '30';
+              timeSlots.push(`${hour12}:${min} ${ampm}`);
+            }
+          }
+          return (
+            <Stack spacing={2}>
+              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
+                <Stack key={day} direction="row" alignItems="center" spacing={2}>
+                  <Typography variant="body2" fontWeight={500} sx={{ width: 100, flexShrink: 0 }}>{day}</Typography>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Open At (CDT)</InputLabel>
+                    <Select label="Open At (CDT)" defaultValue="8:00 AM"
+                      endAdornment={
+                        <span className="material-icons-outlined" style={{ fontSize: 20, color: '#9CA3AF', marginRight: 12 }}>schedule</span>
+                      }
+                      MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
+                    >
+                      {timeSlots.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Close At (CDT)</InputLabel>
+                    <Select label="Close At (CDT)" defaultValue="6:00 PM"
+                      endAdornment={
+                        <span className="material-icons-outlined" style={{ fontSize: 20, color: '#9CA3AF', marginRight: 12 }}>schedule</span>
+                      }
+                      MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
+                    >
+                      {timeSlots.map(t => <MenuItem key={t} value={t}>{t}</MenuItem>)}
+                    </Select>
+                  </FormControl>
+                </Stack>
+              ))}
+            </Stack>
+          );
+        })(),
+      },
+    ];
+
+    function App() {
+      const [activeStep, setActiveStep] = React.useState(0);
+      const [completedSteps, setCompletedSteps] = React.useState(new Set());
+
+      const handleNext = () => {
+        setCompletedSteps(prev => new Set([...prev, activeStep]));
+        if (activeStep < stepsData.length - 1) {
+          setActiveStep(activeStep + 1);
+        }
+      };
+
+      const handleBack = () => {
+        if (activeStep > 0) setActiveStep(activeStep - 1);
+      };
+
+      const handleStepClick = (index) => {
+        setActiveStep(index);
+      };
+
+      const progress = (completedSteps.size / stepsData.length) * 100;
+
+      return (
+        <ThemeProvider theme={theme}>
+          <Paper elevation={24} sx={{
+            width: 720, maxHeight: '90vh', display: 'flex', flexDirection: 'column',
+            borderRadius: 0, overflow: 'hidden',
+          }}>
+            {/* Header */}
+            <Box sx={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              px: 3, py: 2, borderBottom: '1px solid #E5E7EB',
+            }}>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <span className="material-icons-outlined" style={{ color: '#FC6432', fontSize: 22 }}>settings</span>
+                <Typography variant="h6" fontWeight={700} sx={{ fontSize: 18 }}>Shop Settings</Typography>
+              </Stack>
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <Box sx={{ width: 140 }}>
+                  <LinearProgress variant="determinate" value={progress}
+                    sx={{ height: 4, borderRadius: 2, bgcolor: '#E5E7EB',
+                      '& .MuiLinearProgress-bar': { bgcolor: '#FC6432', borderRadius: 2 } }} />
+                </Box>
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {completedSteps.size} of {stepsData.length} complete
+                </Typography>
+                <IconButton size="small" sx={{ bgcolor: '#F3F4F6', '&:hover': { bgcolor: '#E5E7EB' } }}>
+                  <span className="material-icons-outlined" style={{ fontSize: 18 }}>close</span>
+                </IconButton>
+              </Stack>
+            </Box>
+
+            {/* Scrollable stepper body */}
+            <Box sx={{ flex: 1, overflowY: 'auto', py: 1, px: 3 }}>
+              {stepsData.map((step, index) => {
+                const isActive = index === activeStep;
+                const isCompleted = completedSteps.has(index);
+                const isLast = index === stepsData.length - 1;
+
+                return (
+                  <Box key={index}>
+                    {/* Step row: circle + label */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, py: 1.5, cursor: 'pointer',
+                      '&:hover': { opacity: isActive ? 1 : 0.8 }, transition: 'opacity 0.15s' }}
+                      onClick={() => handleStepClick(index)}
+                    >
+                      <StepCircle number={index + 1} status={isCompleted ? 'completed' : isActive ? 'active' : 'inactive'} />
+                      <Typography sx={{
+                        fontSize: 15, fontWeight: isActive ? 700 : 600,
+                        color: isActive ? '#1A1A1A' : '#374151',
+                      }}>
+                        {step.label}
+                      </Typography>
+                    </Box>
+
+                    {/* Expandable content */}
+                    <Collapse in={isActive} timeout={300}>
+                      <Box sx={{ pl: 5.75, pb: 2.5 }}>
+                        <Box sx={{ mb: 3 }}>
+                          {step.fields}
+                        </Box>
+                        <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
+                          {index > 0 && (
+                            <Button variant="text" onClick={handleBack}
+                              sx={{ color: '#374151', fontWeight: 500, '&:hover': { bgcolor: '#F3F4F6' } }}>
+                              Back
+                            </Button>
+                          )}
+                          <Button variant="contained" disableElevation onClick={handleNext}
+                            sx={{
+                              bgcolor: '#FC6432', color: '#fff', px: 3, borderRadius: 2,
+                              '&:hover': { bgcolor: '#E5521A' },
+                            }}>
+                            {index === stepsData.length - 1 ? 'Complete Setup' : 'Next'}
+                          </Button>
+                        </Stack>
+                      </Box>
+                    </Collapse>
+
+                    {/* Horizontal divider between steps */}
+                    {!isLast && <Divider />}
+                  </Box>
+                );
+              })}
+            </Box>
+
+            {/* Footer */}
+            <Box sx={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              px: 3, py: 1.5, borderTop: '1px solid #E5E7EB', bgcolor: '#FAFAFA',
+            }}>
+              <Stack direction="row" alignItems="center" spacing={0.75}>
+                <span className="material-icons-outlined" style={{ fontSize: 14, color: '#22C55E' }}>check_circle</span>
+                <Typography variant="caption" color="text.secondary">Auto-saved</Typography>
+              </Stack>
+              <Typography variant="caption" color="text.secondary">
+                {completedSteps.size === stepsData.length ? 'All sections complete!' : `${stepsData.length - completedSteps.size} sections remaining`}
+              </Typography>
+            </Box>
+          </Paper>
+        </ThemeProvider>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
