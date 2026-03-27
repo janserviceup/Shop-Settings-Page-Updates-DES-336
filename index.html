@@ -188,35 +188,33 @@
         fields: (() => {
           const categories = [
             { name: 'Mechanical & Powertrain', examples: 'Engine Repair, Transmission, Fuel System, A/C, Exhaust' },
-            { name: 'Preventative Maintenance', examples: 'Oil Changes, Tire Rotations, Fluid Services, Filter Replacement' },
-            { name: 'Inspections & Diagnostics', examples: 'State Safety Inspection, DOT, Pre-Purchase, Emissions Check' },
+            { name: 'Preventative Maintenance', examples: 'Oil Changes, Tire Rotations, Fluid Services, Filters' },
+            { name: 'Inspections & Diagnostics', examples: 'State Safety Inspection, DOT, Pre-Purchase, Emissions' },
             { name: 'Fleet & Speciality', examples: 'Fleet Upfitting, Telematics, Tow Hitch, Lift Gate Service' },
-            { name: 'Electrical & ADAS', examples: 'Electrical Diagnostics, ADAS Collaboration, Battery, Lighting' },
-            { name: 'Detailing & Appearance', examples: 'Full Detail, Paint Correction, Ceramic Coating, Window Tint' },
-            { name: 'Collision, Body & Glass', examples: 'Dent Repair, Frame Straightening, Windshield Replacement, Painting' },
-            { name: 'Chassis, Brakes & Tires', examples: 'Brake Service, Wheel Alignment, Tire Replacement, Suspension' },
+            { name: 'Electrical & ADAS', examples: 'Electrical Diagnostics, ADAS Collaboration, Battery' },
+            { name: 'Detailing & Appearance', examples: 'Full Detail, Paint Correction, Ceramic Coating, Tint' },
+            { name: 'Collision, Body & Glass', examples: 'Dent Repair, Frame Straightening, Windshield ...' },
+            { name: 'Chassis, Brakes & Tires', examples: 'Brake Service, Wheel Alignment, Tire Replacement' },
           ];
           return (
             <Stack spacing={0}>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5 }}>
                 Select the service categories your shop offers. Expand a category to pick specific sub-categories.
               </Typography>
               <Stack spacing={1.5}>
                 {categories.map((cat) => (
                   <Box key={cat.name} sx={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    py: 1.75, px: 2.5,
-                    border: '1px solid #E5E7EB', borderRadius: 0,
+                    display: 'flex', alignItems: 'center', py: 1.75, px: 2,
+                    border: '1px solid #E5E7EB',
                     cursor: 'pointer',
                     '&:hover': { bgcolor: '#FAFAFA', borderColor: '#D1D5DB' },
                     transition: 'all 0.15s',
                   }}>
-                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 2, minWidth: 0 }}>
-                      <Typography variant="body2" fontWeight={600} sx={{ flexShrink: 0 }}>{cat.name}</Typography>
-                      <Typography variant="body2" color="text.secondary" noWrap sx={{ fontSize: 13 }}>
-                        E.g. {cat.examples}
-                      </Typography>
-                    </Box>
+                    <Checkbox size="small" sx={{ '&.Mui-checked': { color: '#FC6432' }, mr: 1.5, p: 0.5 }} />
+                    <Typography variant="body2" fontWeight={600} sx={{ flexShrink: 0, minWidth: 195 }}>{cat.name}</Typography>
+                    <Typography variant="body2" color="text.secondary" noWrap sx={{ flex: 1, fontSize: 13, mx: 2 }}>
+                      E.g. {cat.examples}
+                    </Typography>
                     <span className="material-icons-outlined" style={{ fontSize: 20, color: '#9CA3AF', flexShrink: 0 }}>expand_more</span>
                   </Box>
                 ))}
